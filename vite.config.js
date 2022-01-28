@@ -1,7 +1,6 @@
-import { UserConfig } from 'vite'
 import Vue from '@vitejs/plugin-vue'
 
-const config: UserConfig = {
+const config = {
   plugins: [
     Vue()
   ]

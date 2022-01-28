@@ -9,14 +9,10 @@
       <a @click='inc()' style='margin-right:10px'>+</a>
       <a @click='dec()'>-</a>
     </h3>
-
-    <br><br>
-    <p><a href='https://github.com/vueuse/vueuse-vite-starter' target='__blank'>Source</a></p>
-    <p><a href='https://vueuse-vue3-example.netlify.app/' target='__blank'>Webpack Example</a></p>
   </div>
 </template>
 
-<script setup lang="ts">
+<script setup>
 import { useMouse, useCounter } from '@vueuse/core'
 
 const { x, y } = useMouse()
