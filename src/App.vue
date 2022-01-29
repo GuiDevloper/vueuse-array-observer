@@ -1,40 +1,57 @@
-<template>
-  <div id="app">
-    <img src="./logo.svg" />
-    <h1>Hello <a href='https://github.com/vuejs/vite' target='__blank'>Vite</a> and <a href='https://github.com/vueuse/vueuse' target='__blank'>VueUse</a>!</h1>
+<script setup>
+import Comp from './Comp.vue'
+import Visibility from './Visibility.vue'
 
-    <h3>Mouse: {{x}} x {{y}}</h3>
-    <h3>
-      Counter: {{count}}
-      <a @click='inc()' style='margin-right:10px'>+</a>
-      <a @click='dec()'>-</a>
-    </h3>
+import { ref, reactive, onBeforeUpdate, watchEffect } from 'vue'
+import { useIntersectionObserver } from '@vueuse/core'
+
+const isVisible = ref([])
+const list = reactive([1])
+const itemRefs = ref([])
+
+onBeforeUpdate(() => {
+  itemRefs.value = []
+})
+
+watchEffect(() => {
+  list.forEach((_el, i) => {
+    useIntersectionObserver(
+      itemRefs.value[i],
+      ([{ isIntersecting }]) => {
+        isVisible.value[i] = isIntersecting
+      }
+    )
+  })
+}, { flush: 'post' })
+
+const setItemRef = el => {
+  if (el) {
+    itemRefs.value.push(el)
+  }
+}
+const addToList = () => {
+  const lastItem = list[list.length - 1]
+  list.push(lastItem + 1)
+}
+</script>
+
+<template>
+  <div class="root">
+    <Visibility :isVisible="isVisible" :list="list" />
+    <div class="btns">
+      <button @click="addToList">Add</button>
+      <button @click="list.pop()">Remove</button>
+    </div>
+    <Comp
+      v-for="item in list"
+      :ref="setItemRef"
+      :index="item"
+    />
   </div>
 </template>
 
-<script setup>
-import { useMouse, useCounter } from '@vueuse/core'
-
-const { x, y } = useMouse()
-const { count, inc, dec } = useCounter()
-</script>
-
 <style scoped>
-html, body, h1, h2, h3, p {
-  font-family: 'Noto Serif', serif;
-  user-select: none;
-}
-
-#app {
-  text-align: center;
-  color: rgba(0,0,0,0.4);
-}
-img {
-  width: 500px;
-}
-a {
-  color: #41b883;
-  text-decoration: none;
-  cursor: pointer;
+.btns {
+  margin-bottom: 50px;
 }
 </style>
